@@ -30,3 +30,11 @@ class Tests(unittest.TestCase):
         self.assertEqual(next_higher_measurable(10.5), 11)
         self.assertEqual(next_higher_measurable(3), 3.1)
         self.assertEqual(next_higher_measurable(10), 10.5)
+
+    def test_generate_desensitization(self):
+        bag_list = generate_desensitization(Cyclophosphamide, 1080)
+        for bag in bag_list:
+            print(f"{bag.drug} {bag.dose} mg in {bag.diluent} {bag.volume} mL")
+
+    def test_true_floor_division(self):
+        self.assertEqual(true_floor_division(106, 10), 10)
