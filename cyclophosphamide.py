@@ -37,7 +37,7 @@ class Cyclophosphamide:
             },
             2: {
                 "dose_modifier": 0.01, # bag_dose = total_dose * dose_modifier
-                "drug_conc_added": 20, # mg/mL
+                "drug_conc_added": 2, # mg/mL
                 "diluent_bag": "NS",
                 "diluent_bag_size": 250, # mL
                 "diluent_bag_total_vol": 275, # mL
