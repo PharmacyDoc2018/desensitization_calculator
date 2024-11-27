@@ -4,14 +4,17 @@ class Cyclophosphamide:
         return "cyclophosphamide"
     
     def concentration():
-        return 200
+        return 20
     
+    def units():
+        return "mg"
+
     def dilution_num():
-        return 2
+        return 1 
     
     def dilutions():
         return {
-            "step_1": {
+            1: {
                 "initial_conc": 20,
                 "drug_vol": 1,
                 "diluent": "NS",

@@ -130,7 +130,7 @@ def to_dose(vol, conc):
 def generate_desensitization(drug, dose):
     bag_list = []
     for i in range(1, drug.total_bag_num() + 1):
-        bag_list.append(Bag(drug.name(), dose * drug.bags()[i]["dose_modifier"], drug.bags()[i]["diluent_bag"], drug.bags()[i]["diluent_bag_size"]))
+        bag_list.append(Bag(drug.name(), dose * drug.bags()[i]["dose_modifier"], drug.units(), drug.bags()[i]["diluent_bag"], drug.bags()[i]["diluent_bag_size"]))
 
     for i in range(1, drug.total_bag_num() + 1):
         bag_dose = bag_list[i-1].dose
@@ -160,4 +160,44 @@ def generate_desensitization(drug, dose):
             dose_difference -= adjustment 
 
     return bag_list
+
+def generate_desensitization_instructions(drug, dose):
+    instructions = f"Generating {drug.name()} {dose} {drug.units()} desensitization...\n\n"
+    
+    instructions += "Bag List:\n" 
+    bag_list = generate_desensitization(drug, dose)
+    i = 1
+    for bag in bag_list:
+        this_dose = bag.dose
+        if true_mod(this_dose, 1) == 0:
+            this_dose = int(this_dose)
+        instructions += f"\tBag {i}) {bag.drug} {this_dose} {bag.units} in {bag.diluent} {bag.volume} mL\n"
+        i+=1
+
+    instructions += "\nDilution Instructions:\n"
+    dilution_num = drug.dilution_num()
+    if dilution_num == 1:
+        s = "dilution"
+    elif dilution_num > 1:
+        s = "dilutions"
+    instructions += f"\tThis desensitization will have {dilution_num} {s}.\n\n"
+    for i in range(1, drug.dilution_num() + 1):
+        instructions += f"Step {i}:\n"
+        instructions += f"\t[] Draw up {drug.dilutions()[i]['drug_vol']} mL of {drug.name()} at {drug.dilutions()[i]['initial_conc']} {drug.units()}/mL and add to an empty reservoir vial\n" 
+        instructions += f"\t[] Draw up {drug.dilutions()[i]['diluent_amount']} mL of {drug.dilutions()[i]['diluent']} and add to the reservoir vial\n"
+        x = drug.dilutions()[i]['drug_vol'] + drug.dilutions()[i]['diluent_amount']
+        instructions += f"\t[] The reservoir now contains {x} mL of {drug.name()} at {drug.dilutions()[i]['final_conc']} {drug.units()}/mL\n\n"
+
+    instructions += "Desensitization Bag Preperation:\n\n"
+    for i in range (1, len(bag_list)+1):
+        this_dose = bag_list[i-1].dose
+        if true_mod(this_dose, 1) == 0:
+            this_dose = int(this_dose)
+        instructions += f"Bag {i}: {bag.drug} {this_dose} {bag.units} in {bag.diluent} {bag.volume} mL\n"
+        dose_conc = drug.bags()[i]["drug_conc_added"]
+        dose_vol = to_volume(bag_list[i-1].dose, dose_conc)
+        dose_vol = to_measurable(dose_vol) 
+        instructions += f"\t[] Draw up {dose_vol} mL of {drug.name()} at {drug.bags()[i]['drug_conc_added']} {drug.units()}/mL\n"
+        instructions += f"\t[] Add drug volume to a {drug.bags()[i]['diluent_bag']} {drug.bags()[i]['diluent_bag_size']} mL bag\n\n"
+    return instructions
 
