@@ -152,12 +152,11 @@ def generate_desensitization(drug, dose):
 
             adjustment = 0
             while (true_subtraction(bag_dose_up, bag_dose) <= dose_difference) and (adjustment < dose_difference):
-                adjustment += true_subtraction(bag_dose_up, bag_dose)
+                adjustment = true_subtraction(bag_dose_up, bag_dose)
                 bag_dose = bag_dose_up
                 bag_dose_up = to_dose(next_higher_measurable(to_volume(bag_dose, drug.bags()[i+1]["drug_conc_added"])), drug.bags()[i+1]["drug_conc_added"])
-            
-            bag_list[i].dose += adjustment
-            dose_difference -= adjustment 
+                dose_difference = true_subtraction(dose_difference, adjustment) 
+                bag_list[i].dose = true_addition(bag_list[i].dose, adjustment) 
 
     return bag_list
 
