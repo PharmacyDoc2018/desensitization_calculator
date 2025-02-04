@@ -196,6 +196,10 @@ def generate_desensitization_instructions(drug, dose):
         dose_vol = to_volume(bag_list[i-1].dose, dose_conc)
         dose_vol = to_measurable(dose_vol) 
         instructions += f"\t[] Draw up {dose_vol} mL of {drug.name()} at {drug.bags()[i]['drug_conc_added']} {drug.units()}/mL\n"
-        instructions += f"\t[] Add drug volume to a {drug.bags()[i]['diluent_bag']} {drug.bags()[i]['diluent_bag_size']} mL bag\n\n"
+        instructions += f"\t[] Add drug volume to a {drug.bags()[i]['diluent_bag']} {drug.bags()[i]['diluent_bag_size']} mL bag\n"
+        total_volume = true_addition(drug.bags()[i]['diluent_bag_total_vol'],dose_vol)
+        if total_volume % 1 == 0:
+            total_volume = int(total_volume)
+        instructions += f"\t[] Total Volume = {total_volume} mL\n\n"
     return instructions
 
